@@ -2,7 +2,6 @@
 
 This project aims to automate the hardening of Windows 11 and Ubuntu 24.04 LTS systems using STIGs (Security Technical Implementation Guides) provided by the Department of Defense (DoD). The overall goal is to build a framework capable of performing automated configuration, compliance verification, and cross-platform security standardization, ensuring both systems meet DoD-level security baselines.
 
----
 
 ## Objectives Statement
 
@@ -13,7 +12,6 @@ The objective of this project is to develop a cross-platform security automation
 - Automates both STIG application and compliance verification using PowerShell and Bash scripts.  
 - Generates structured compliance reports summarizing conforming and non-conforming configurations.  
 
----
 
 ## Materials & Software
 
