@@ -29,3 +29,4 @@ The objective of this project is to develop a cross-platform security automation
 - Goal 2: Implement at least 5 STIG compliance requirements on a Ubuntu 24.04 LTS system via a Raspberry Pi
 - Goal 3: Create automated compliance checking tools that validate STIG application
 - Goal 4: Create automated hardening scripts that apply STIGs without manual intervention
+- Goal 5: Output the results in a readable format for the end user
