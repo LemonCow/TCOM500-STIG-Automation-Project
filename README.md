@@ -30,3 +30,93 @@ The objective of this project is to develop a cross-platform security automation
 - Goal 3: Create automated compliance checking tools that validate STIG application
 - Goal 4: Create automated hardening scripts that apply STIGs without manual intervention
 - Goal 5: Output the results in a readable format for the end user
+
+## Project Requirements
+
+**High Level Block Diagram**
+
+┌─────────────────────────────────────────────────────────────┐
+│                    STIG Compliance System                   │
+├─────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌─────────────────────┐     ┌─────────────────────┐      │
+│  │   Windows 11 Stack  │     │   Ubuntu/RPi Stack  │     │
+│  ├─────────────────────┤     ├─────────────────────┤     │
+│  │                     │     │                     |     │
+│  │  ┌──────────────┐   │     │  ┌──────────────┐  │      │
+│  │  │ PowerShell   │   │     │  │ Bash Script  │  │      │
+│  │  │ Compliance   │   │     │  │ Compliance   │  │      │
+│  │  │ Checker      │   │     │  │ Checker      │  │      │
+│  │  └──────┬───────┘   │     │  └──────┬───────┘  │      │
+│  │         │           │     │         │          │      │
+│  │  ┌──────▼───────┐   │     │  ┌──────▼───────┐  │      │
+│  │  │ PowerShell   │   │     │  │ Bash Script  │  │      │
+│  │  │ Hardening    │   │     │  │ Hardening    │  │      │
+│  │  │ Automator    │   │     │  │ Automator    │  │      │
+│  │  └──────┬───────┘   │     │  └──────┬───────┘  │      │
+│  │         │           │     │         │          │      │
+│  │  ┌──────▼───────┐   │     │  ┌──────▼───────┐  │      │
+│  │  │  Report      │   │     │  │  Report      │  │      │
+│  │  │  Generator   │   │     │  │  Generator   │  │      │
+│  │  └──────────────┘   │     │  └──────────────┘  │      │
+│  │                     │     │                    │      │
+│  └─────────────────────┘     └────────────────────┘      │
+│                                                            │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │         Common Components & Documentation           │    │
+│  ├─────────────────────────────────────────────────────┤    │
+│  │ • STIG Mapping Database                             │    │
+│  │ • Configuration Templates                           │    │
+│  │ • Compliance Reports                                │    |
+│  │ • Audit Logs                                        │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+**Project Architecture Flow**
+
+┌────────────────────────────────────────────────────────────┐
+│               Windows 11 STIG System Flow                   │
+└────────────────────────────────────────────────────────────┘
+
+    User Input
+       │
+       ▼
+┌─────────────────┐
+│  Run Script     │
+│  (Admin Mode)   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│    Compliance Checker Module            │
+├─────────────────────────────────────────┤
+│ • Check Registry Keys                   │
+│ • Verify Group Policies                 │
+│ • Audit User Permissions                │
+│ • Check Service Configurations          │
+│ • Verify Firewall Rules                 │
+│ • Password Policy Validation            │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│    Generate Compliance Report           │
+│    (Pass/Fail for each STIG)            │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+    ┌───────┐
+    │ Pass? │ ─────No─────┐
+    └───┬───┘             │
+        │                 │
+       Yes                ▼
+        │         ┌────────────────────┐
+        │         │  Hardening Module  │
+        │         └────────┬───────────┘
+        │                  │
+        └──────────────────┘
+                 │
+                 ▼
+        ┌────────────────┐
+        │  Final Report  │
+        │  & Audit Log   │
+        └────────────────┘
