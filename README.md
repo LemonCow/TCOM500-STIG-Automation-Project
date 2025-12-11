@@ -35,88 +35,13 @@ The objective of this project is to develop a cross-platform security automation
 
 **High Level Block Diagram**
 
-┌─────────────────────────────────────────────────────────────┐
-│                    STIG Compliance System                   │
-├─────────────────────────────────────────────────────────────┤
-│                                                            │
-│  ┌─────────────────────┐     ┌─────────────────────┐      │
-│  │   Windows 11 Stack  │     │   Ubuntu/RPi Stack  │     │
-│  ├─────────────────────┤     ├─────────────────────┤     │
-│  │                     │     │                     |     │
-│  │  ┌──────────────┐   │     │  ┌──────────────┐  │      │
-│  │  │ PowerShell   │   │     │  │ Bash Script  │  │      │
-│  │  │ Compliance   │   │     │  │ Compliance   │  │      │
-│  │  │ Checker      │   │     │  │ Checker      │  │      │
-│  │  └──────┬───────┘   │     │  └──────┬───────┘  │      │
-│  │         │           │     │         │          │      │
-│  │  ┌──────▼───────┐   │     │  ┌──────▼───────┐  │      │
-│  │  │ PowerShell   │   │     │  │ Bash Script  │  │      │
-│  │  │ Hardening    │   │     │  │ Hardening    │  │      │
-│  │  │ Automator    │   │     │  │ Automator    │  │      │
-│  │  └──────┬───────┘   │     │  └──────┬───────┘  │      │
-│  │         │           │     │         │          │      │
-│  │  ┌──────▼───────┐   │     │  ┌──────▼───────┐  │      │
-│  │  │  Report      │   │     │  │  Report      │  │      │
-│  │  │  Generator   │   │     │  │  Generator   │  │      │
-│  │  └──────────────┘   │     │  └──────────────┘  │      │
-│  │                     │     │                    │      │
-│  └─────────────────────┘     └────────────────────┘      │
-│                                                            │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │         Common Components & Documentation           │    │
-│  ├─────────────────────────────────────────────────────┤    │
-│  │ • STIG Mapping Database                             │    │
-│  │ • Configuration Templates                           │    │
-│  │ • Compliance Reports                                │    |
-│  │ • Audit Logs                                        │    │
-│  └─────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
+<img width="398" height="626" alt="Block Diagram" src="https://github.com/user-attachments/assets/b66a01e6-206f-4987-81fc-d3afa9734c3b" />
+
 **Project Architecture Flow**
 
-┌────────────────────────────────────────────────────────────┐
-│               Windows 11 STIG System Flow                   │
-└────────────────────────────────────────────────────────────┘
+<img width="264" height="653" alt="Architecture Flow" src="https://github.com/user-attachments/assets/9f6c19d2-2d26-4ed7-bf07-fa64dc7c3b56" />
 
-    User Input
-       │
-       ▼
-┌─────────────────┐
-│  Run Script     │
-│  (Admin Mode)   │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────────────────────────────┐
-│    Compliance Checker Module            │
-├─────────────────────────────────────────┤
-│ • Check Registry Keys                   │
-│ • Verify Group Policies                 │
-│ • Audit User Permissions                │
-│ • Check Service Configurations          │
-│ • Verify Firewall Rules                 │
-│ • Password Policy Validation            │
-└────────┬────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────┐
-│    Generate Compliance Report           │
-│    (Pass/Fail for each STIG)            │
-└────────┬────────────────────────────────┘
-         │
-         ▼
-    ┌───────┐
-    │ Pass? │ ─────No─────┐
-    └───┬───┘             │
-        │                 │
-       Yes                ▼
-        │         ┌────────────────────┐
-        │         │  Hardening Module  │
-        │         └────────┬───────────┘
-        │                  │
-        └──────────────────┘
-                 │
-                 ▼
-        ┌────────────────┐
-        │  Final Report  │
-        │  & Audit Log   │
-        └────────────────┘
+**(Current) Requirements & Verification**
+
+<img width="1258" height="701" alt="image" src="https://github.com/user-attachments/assets/16ef2249-a66a-4cd1-b626-ac62f10a39e0" />
+
