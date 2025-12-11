@@ -40,7 +40,7 @@ The objective of this project is to develop a cross-platform security automation
 
 <img width="264" height="653" alt="Architecture Flow" src="https://github.com/user-attachments/assets/9f6c19d2-2d26-4ed7-bf07-fa64dc7c3b56" />
 
-**(Current) Requirements & Verification**
+**(Current) Requirements & Verification Methods**
 
 <img width="1258" height="701" alt="image" src="https://github.com/user-attachments/assets/16ef2249-a66a-4cd1-b626-ac62f10a39e0" />
 
