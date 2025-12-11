@@ -22,7 +22,6 @@ The objective of this project is to develop a cross-platform security automation
 ### **Software**
 - PowerShell scripting for Windows STIG compliance and automation  
 - Bash scripting for Ubuntu STIG compliance and automation  
-- Python (Flask) for a lightweight compliance server to display results
 
 ## Final Project Goals
 - Goal 1: Implement at least 5 STIG compliance requirements on a Windows 11 system
