@@ -68,4 +68,16 @@ The objective of this project is to develop a cross-platform security automation
 7. Follow the instructions outputted by the code as appropriate
 8. The results/report will display within the Terminal
 
+## Extra Notes
+
+For research on which STIG's to use and which to disgard, I consulted this website developed by the Department of Defense: https://www.cyber.mil/stigs/.
+
+Here it provided me with a program called STIG Viewer where you can download and view any STIG requirements from any OS you can think of, from Windows to Linux, and even MAC STIG's. 
+
+STIG's are classified in classes and designated a number ranging from 1 to 3 called CATs. 1 is a vunlerability that can be the most critical and 3 being the least critical for a system's vulnerability. This project covers five CAT 1 vulnerabilites for both systems. 
+
+Below is a screenshot of STIG Viewer:
+
+<img width="1010" height="757" alt="Screenshot 2025-12-12 151854" src="https://github.com/user-attachments/assets/2f4b5715-6011-4e62-9250-4a76ab19178b" />
+
 
