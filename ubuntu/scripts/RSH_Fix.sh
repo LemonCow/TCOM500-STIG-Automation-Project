@@ -448,7 +448,6 @@ verification_result=$?
 # Display results
 if [ ${verification_result} -eq 0 ] || [ "${VERIFY}" = false ]; then
     print_success
-    generate_report
     exit 0
 else
     echo -e "${RED}Remediation completed but verification failed${NC}"
