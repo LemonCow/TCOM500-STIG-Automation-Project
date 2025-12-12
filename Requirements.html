@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STIG Compliance Automation - Requirements Matrix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        thead th {
+            background: #4a6fa5;
+            color: white;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+            border: 1px solid #3a5a8a;
+        }
+        
+        tbody tr {
+            background: #e8eef7;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background: #d6e0f0;
+        }
+        
+        tbody td {
+            padding: 14px 12px;
+            border: 1px solid #c5d3e8;
+            vertical-align: top;
+        }
+        
+        .req-type {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+        
+        .stakeholder {
+            background: #d4e4f7 !important;
+        }
+        
+        .system {
+            background: #d4e4f7 !important;
+        }
+        
+        .functional {
+            background: #d4e4f7 !important;
+        }
+        
+        .nonfunctional {
+            background: #d4e4f7 !important;
+        }
+        
+        .col-type {
+            width: 180px;
+        }
+        
+        .col-details {
+            width: auto;
+        }
+        
+        .col-verification {
+            width: 220px;
+        }
+        
+        .col-validation {
+            width: 220px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>STIG Compliance Automation Project</h1>
+            <p>Requirements Traceability Matrix | Version 1.0 | December 10, 2025</p>
+        </div>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-type">Requirement Type</th>
+                        <th class="col-details">Details</th>
+                        <th class="col-verification">Verification Method</th>
+                        <th class="col-validation">Validation Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- STAKEHOLDER REQUIREMENTS -->
+                    <tr class="stakeholder">
+                        <td class="req-type">Stakeholder<br>Requirement</td>
+                        <td>System administrators need automated STIG compliance checking and hardening for Windows 11 and Ubuntu systems</td>
+                        <td>Demo/User Acceptance</td>
+                        <td>Live demo session</td>
+                    </tr>
+                    
+                    <!-- SYSTEM REQUIREMENTS - WINDOWS -->
+                    <tr class="system">
+                        <td class="req-type">System<br>Requirement</td>
+                        <td>The Windows subsystem shall check 5 Windows 11 STIGs and automatically apply 5 remediations</td>
+                        <td>System Test</td>
+                        <td>End-to-end test on fresh Windows 11 installation</td>
+                    </tr>
+                    
+                    <tr class="system">
+                        <td class="req-type">System<br>Requirement</td>
+                        <td>The Linux subsystem shall check 5 Ubuntu STIGs and automatically apply 5 remediations on a Raspberry Pi 5</td>
+                        <td>System Test</td>
+                        <td>End-to-end test on fresh Ubuntu installation</td>
+                    </tr>
+                    
+                    <tr class="system">
+                        <td class="req-type">System<br>Requirement</td>
+                        <td>The system shall generate compliance reports via the Powershell/Bash script's output upon running</td>
+                        <td>Inspection</td>
+                        <td>Review report outputs for completeness and accuracy</td>
+                    </tr>
+                    
+                    <!-- FUNCTIONAL REQUIREMENTS - WINDOWS -->
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The PowerShell script shall verify reversible password encryption is disabled per STIG WN11-AC-000045 (Store passwords using reversible encryption = Disabled)</td>
+                       <td>Unit Test (Security Policy)</td>
+                       <td>Verify password storage uses one-way cryptographic hashing</td>
+                                            </tr>
+                    
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The PowerShell script shall verify that autorun commands are prevented from executing per STIG WN11-CC-000185</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>Review Register Key values to observe change</td>
+                                            </tr>
+
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The PowerShell script shall verify that no Internet Information System (IIS) or its subcomponents is installed per STIG WN11-AC-000100</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>Review Register Key values to observe change</td>
+                                            </tr>
+
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The PowerShell script shall verify that autoplay is turned off for non-volume devices per STIG WN11-CC-000180</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>Review Register Key values to observe change</td>
+                                            </tr>
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The Bash script shall verify that all appropriate driver are formatted in the NTFS format per STIG WN11-00-000050</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>View the drivers current format</td>
+                                            </tr>
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The Bash script shall verify that SSH is indeed installed on the system per STIG UBTU-24-100800</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>Command Line test to see if package is there</td>
+                                            </tr>
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The Bash script script shall verify that SSH must have its Unattended feature disable per UBTU-24-300031</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>Review SSH configuration file</td>
+                                            </tr>
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The Bash script script shall verify that Telnet is uninstalled per UBTU-24-100030</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>Command Line test to see if package is not there</td>
+                                            </tr>
+
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The Bash script shall verify that no Remote X connections are possible per UBTU-24-300022</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>Review Register Key values to observe change</td>
+                                            </tr>
+
+                    <tr class="functional">
+                        <td class="req-type">Functional<br>Requirement</td>
+                       <td>The Bash script shall verify that no RSH packages exist on the system per UBTU-24-100040</td>
+                       <td>Unit Test (Registry Check)</td>
+                       <td>Command Line test to see if package is not there</td>
+                                            </tr>
+
+                    <!-- NON-FUNCTIONAL REQUIREMENTS -->
+                    <tr class="nonfunctional">
+                        <td class="req-type">Non-Functional<br>Requirement</td>
+                        <td>The scripts shall complete compliance checking and remediation in ≤5 minutes on target hardware</td>
+                        <td>Performance Test</td>
+                        <td>Benchmark execution time on multiple systems</td>
+                    </tr>
+                    
+                    
+                    <tr class="nonfunctional">
+                        <td class="req-type">Non-Functional<br>Requirement</td>
+                        <td>The fix scripts shall require Administrator (Windows) or root/sudo (Linux) privileges to execute</td>
+                        <td>Security Policy Audit</td>
+                        <td>Test script execution as standard user (should fail)</td>
+                    </tr>
+                    
+                    <tr class="nonfunctional">
+                        <td class="req-type">Non-Functional<br>Requirement</td>
+                        <td>The scripts shall achieve ≥99% success rate (idempotent - can run multiple times without errors)</td>
+                        <td>Reliability Test</td>
+                        <td>Execute scripts 3 consecutive times</td>
+                    </tr>
+                    
+                   
+                    <tr class="nonfunctional">
+                        <td class="req-type">Non-Functional<br>Requirement</td>
+                        <td>The system shall provide clear error messages and progress indicators during execution</td>
+                        <td>Usability Test</td>
+                        <td>User acceptance testing with IT team</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
