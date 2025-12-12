@@ -52,10 +52,11 @@ The objective of this project is to develop a cross-platform security automation
 
 1. Install the windows folder into your Downloads Folder
 2. Open up powershell as an Administrator
-3. Type out this command to get to the appropriate folder: C:\Users\Philip Isaacs\Downloads\windows\scripts
-4. For every STIG you wish to check and implement type the appropriate Check and Fix files in this format: .\\[filename].ps1
-5. Follow the instructions outputted by the code as appropriate
-6. The results/report will display within Powershell
+3. Download and extract the files into your downloads
+4. Type out this command to get to the appropriate folder: C:\Users\[Your Username]\Downloads\TCOM500-STIG-Automation-Project-main\windows\scripts
+5. For every STIG you wish to check and implement type the appropriate Check and Fix files in this format: .\\[filename].ps1
+6. Follow the instructions outputted by the code as appropriate
+7. The results/report will display within Powershell
 
 **Linux**
 1. Install all the .sh files your Downloads folder
