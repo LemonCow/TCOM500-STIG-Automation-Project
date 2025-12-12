@@ -44,3 +44,26 @@ The objective of this project is to develop a cross-platform security automation
 
 <img width="1258" height="701" alt="image" src="https://github.com/user-attachments/assets/16ef2249-a66a-4cd1-b626-ac62f10a39e0" />
 
+## Instructions
+
+**Windows**
+
+1. Install the windows folder into your Downloads Folder
+2. Open up powershell as an Administrator
+3. Type out this command to get to the appropriate folder: C:\Users\Philip Isaacs\Downloads\windows\scripts
+4. For every STIG you wish to check and implement type the appropriate Check and Fix files in this format: .\[filename].ps1
+5. Follow the instructions outputted by the code as appropriate
+6. The results/report will display within Powershell
+
+**Linux**
+1. Install all the .sh files your Downloads folder
+2. Open up the Terminal
+3. Open up the zip file and navigate to the ubuntu file via this command: cd Downloads/TCOM500-STIG-Automation-Project-main/ubuntu/scripts
+4. Copy and paste this command in the directory: chmod +x SSH_Unattend_Check.sh SSH_Unattend_Fix.sh SSH_Check.sh SSH_Fix.sh Telnet_Check.sh Telnet_Fix.sh Remote_x_Check.sh Remote_x_Fix.sh RSH_Check.sh RSH_Fix.sh
+5. For every STIG you wish to check and implement type the appropriate Check and Fix files in this format:
+  - For Check files: .\[filename].sh
+  - For Fix files: sudo .\[filename].sh
+7. Follow the instructions outputted by the code as appropriate
+8. The results/report will display within the Terminal
+
+
