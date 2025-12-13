@@ -1,263 +1,264 @@
-<#
-.SYNOPSIS
-    Remediates STIG WN11-CC-000180 - Disables Autoplay for non-volume devices.
+#!/bin/bash
 
-.DESCRIPTION
-    Configures the registry to disable Autoplay for non-volume devices (such as MTP devices)
-    to achieve compliance with STIG WN11-CC-000180.
-    
-    STIG ID: WN11-CC-000180
-    Severity: CAT I
-    
-.PARAMETER Force
-    Skip confirmation prompts and force remediation.
+#########################################################################
+# Ubuntu 24.04 LTS STIG Remediation Script
+# STIG ID: UBTU-24-100030
+# Rule: Remove telnet package
+# Severity: CAT I
+#########################################################################
 
-.PARAMETER CreateBackup
-    Creates a backup of the current registry value before modification.
-
-.EXAMPLE
-    .\Remediate-STIG-WN11-CC-000180.ps1
-    
-.EXAMPLE
-    .\Remediate-STIG-WN11-CC-000180.ps1 -Force
-
-.EXAMPLE
-    .\Remediate-STIG-WN11-CC-000180.ps1 -Force -CreateBackup
-
-.NOTES
-    Requires Administrator privileges.
-    
-    Registry Path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer
-    Value Name: NoAutoplayfornonVolume
-    Value Data: 1 (REG_DWORD)
-#>
-
-[CmdletBinding(SupportsShouldProcess)]
-param(
-    [Parameter(Mandatory=$false)]
-    [switch]$Force,
-    
-    [Parameter(Mandatory=$false)]
-    [switch]$CreateBackup
-)
+# Color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
 
 # STIG Information
-$STIG_ID = "WN11-CC-000180"
-$STIG_Title = "Autoplay must be turned off for non-volume devices"
-$Severity = "CAT I"
+STIG_ID="UBTU-24-100030"
+SEVERITY="CAT I"
 
-# Registry configuration
-$RegPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
-$RegValueName = "NoAutoplayfornonVolume"
-$RequiredValue = 1
-$RequiredType = "DWord"
+# Counters
+REMOVED_COUNT=0
+FAILED_COUNT=0
 
-# Require Administrator privileges
-if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Host "ERROR: This script requires Administrator privileges." -ForegroundColor Red
-    Write-Host "Please run PowerShell as Administrator and try again." -ForegroundColor Red
-    exit 1
+print_header() {
+    echo -e "${CYAN}======================================${NC}"
+    echo -e "${CYAN}STIG ${STIG_ID} Remediation${NC}"
+    echo -e "${CYAN}Remove Telnet Packages${NC}"
+    echo -e "${CYAN}Severity: ${SEVERITY}${NC}"
+    echo -e "${CYAN}======================================${NC}"
+    echo ""
 }
 
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "STIG Remediation Script" -ForegroundColor Cyan
-Write-Host "STIG ID: $STIG_ID" -ForegroundColor Cyan
-Write-Host "Title: $STIG_Title" -ForegroundColor Cyan
-Write-Host "Severity: $Severity" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host ""
-
-Write-Host "This script will configure the following:" -ForegroundColor Yellow
-Write-Host "  Registry Path: $RegPath" -ForegroundColor Gray
-Write-Host "  Value Name: $RegValueName" -ForegroundColor Gray
-Write-Host "  Value Type: REG_DWORD" -ForegroundColor Gray
-Write-Host "  Value Data: $RequiredValue" -ForegroundColor Gray
-Write-Host ""
-Write-Host "Effect: Disables Autoplay for non-volume devices (MTP devices, etc.)" -ForegroundColor Yellow
-Write-Host ""
-
-# Check current configuration
-Write-Host "Checking current configuration..." -ForegroundColor Yellow
-
-$currentValue = $null
-$currentType = $null
-$pathExists = Test-Path -Path $RegPath
-
-if ($pathExists) {
-    try {
-        $regItem = Get-ItemProperty -Path $RegPath -Name $RegValueName -ErrorAction SilentlyContinue
-        if ($regItem) {
-            $currentValue = $regItem.$RegValueName
-            $currentType = (Get-Item -Path $RegPath).GetValueKind($RegValueName)
-            Write-Host "  Current Value: $currentValue ($currentType)" -ForegroundColor Gray
-        }
-        else {
-            Write-Host "  Current Value: Not configured" -ForegroundColor Gray
-        }
-    }
-    catch {
-        Write-Host "  Current Value: Not configured" -ForegroundColor Gray
-    }
-}
-else {
-    Write-Host "  Registry path does not exist" -ForegroundColor Gray
+check_root() {
+    if [ "$EUID" -ne 0 ]; then
+        echo -e "${RED}ERROR: Must run as root (use sudo)${NC}"
+        exit 1
+    fi
 }
 
-Write-Host ""
-
-# Check if already compliant
-if ($pathExists -and $currentValue -eq $RequiredValue -and $currentType -eq $RequiredType) {
-    Write-Host "========================================" -ForegroundColor Green
-    Write-Host "ALREADY COMPLIANT" -ForegroundColor Green
-    Write-Host "========================================" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "The system is already configured correctly." -ForegroundColor Green
-    Write-Host "No changes are needed." -ForegroundColor Green
-    Write-Host ""
-    exit 0
-}
-
-# Confirmation prompt
-if (-not $Force) {
-    Write-Host "Do you want to proceed with remediation? (yes/no): " -ForegroundColor Yellow -NoNewline
-    $confirmation = Read-Host
+stop_telnet_services() {
+    echo -e "${CYAN}Stopping telnet services...${NC}"
     
-    if ($confirmation -ne "yes") {
-        Write-Host ""
-        Write-Host "Remediation cancelled by user." -ForegroundColor Yellow
-        exit 0
-    }
-    Write-Host ""
+    # Stop systemd services
+    for service in telnet.socket telnetd.socket telnet telnetd inetutils-telnetd; do
+        if systemctl is-active --quiet "$service" 2>/dev/null; then
+            echo "  Stopping $service..."
+            systemctl stop "$service" 2>/dev/null
+            systemctl disable "$service" 2>/dev/null
+        fi
+    done
+    
+    # Kill any running telnet daemon
+    if pgrep -x "telnetd" > /dev/null; then
+        echo "  Killing telnetd processes..."
+        pkill -9 telnetd
+    fi
+    
+    echo -e "${GREEN}  ✓ Services stopped${NC}"
+    echo ""
 }
 
-# Backup current configuration if requested
-if ($CreateBackup -and $pathExists) {
-    Write-Host "Creating backup of current registry configuration..." -ForegroundColor Yellow
+remove_telnet_packages() {
+    echo -e "${CYAN}Checking for telnet packages...${NC}"
+    echo ""
     
-    $backupPath = "$env:TEMP\STIG_Backup_$STIG_ID_$(Get-Date -Format 'yyyyMMdd_HHmmss').reg"
+    # *** FIX: Use correct package detection ***
+    # The issue was using grep with package names that might not match exactly
     
-    try {
-        # Export registry key
-        $exportPath = $RegPath -replace 'HKLM:\\', 'HKEY_LOCAL_MACHINE\'
-        $regExportCmd = "reg export `"$exportPath`" `"$backupPath`" /y"
+    # List of all possible telnet packages
+    local packages=(
+        "telnetd"
+        "telnet"
+        "telnet-server" 
+        "inetutils-telnetd"
+        "inetutils-telnet"
+        "krb5-telnetd"
+    )
+    
+    local found_packages=()
+    
+    # Check which packages are actually installed
+    for package in "${packages[@]}"; do
+        # Use dpkg-query for precise package checking
+        if dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q "install ok installed"; then
+            found_packages+=("$package")
+            echo -e "${YELLOW}  Found: $package${NC}"
+        fi
+    done
+    
+    if [ ${#found_packages[@]} -eq 0 ]; then
+        echo -e "${GREEN}  ✓ No telnet packages found${NC}"
+        echo ""
+        return 0
+    fi
+    
+    echo ""
+    echo -e "${YELLOW}Packages to remove: ${#found_packages[@]}${NC}"
+    for pkg in "${found_packages[@]}"; do
+        echo "  - $pkg"
+    done
+    echo ""
+    
+    # Remove found packages
+    for package in "${found_packages[@]}"; do
+        echo -e "${CYAN}Removing $package...${NC}"
         
-        $exportResult = Invoke-Expression $regExportCmd 2>&1
-        
-        if (Test-Path $backupPath) {
-            Write-Host "  [OK] Backup created: $backupPath" -ForegroundColor Green
-        }
-        else {
-            Write-Host "  [WARN] Backup file not created, but continuing with remediation" -ForegroundColor Yellow
-        }
-    }
-    catch {
-        Write-Host "  [WARN] Could not create backup: $($_.Exception.Message)" -ForegroundColor Yellow
-        Write-Host "        Continuing with remediation..." -ForegroundColor Yellow
-    }
-    
-    Write-Host ""
+        # Use --purge to remove config files too
+        if DEBIAN_FRONTEND=noninteractive apt-get remove --purge -y "$package" 2>&1 | grep -v "^Reading"; then
+            echo -e "${GREEN}  ✓ Successfully removed $package${NC}"
+            ((REMOVED_COUNT++))
+        else
+            echo -e "${RED}  ✗ Failed to remove $package${NC}"
+            ((FAILED_COUNT++))
+        fi
+        echo ""
+    done
 }
 
-# Perform remediation
-Write-Host "Applying remediation..." -ForegroundColor Yellow
-
-$remediationSuccess = $false
-$remediationError = $null
-
-try {
-    # Create registry path if it doesn't exist
-    if (-not $pathExists) {
-        Write-Host "  Creating registry path..." -ForegroundColor Yellow
-        New-Item -Path $RegPath -Force | Out-Null
-        Write-Host "  [OK] Registry path created" -ForegroundColor Green
-    }
+cleanup_config_files() {
+    echo -e "${CYAN}Cleaning up configuration files...${NC}"
     
-    # Set registry value
-    Write-Host "  Setting registry value..." -ForegroundColor Yellow
+    # Remove inetd telnet entries
+    if [ -f /etc/inetd.conf ]; then
+        if grep -q "^telnet" /etc/inetd.conf 2>/dev/null; then
+            echo "  Removing telnet from inetd.conf..."
+            sed -i.bak '/^telnet/d' /etc/inetd.conf
+            echo -e "${GREEN}  ✓ Cleaned inetd.conf${NC}"
+        fi
+    fi
     
-    Set-ItemProperty -Path $RegPath -Name $RegValueName -Value $RequiredValue -Type $RequiredType -Force -ErrorAction Stop
+    # Remove xinetd telnet config
+    if [ -f /etc/xinetd.d/telnet ]; then
+        echo "  Removing xinetd telnet config..."
+        rm -f /etc/xinetd.d/telnet
+        echo -e "${GREEN}  ✓ Removed xinetd config${NC}"
+    fi
     
-    # Verify the change
-    $verifyValue = Get-ItemProperty -Path $RegPath -Name $RegValueName -ErrorAction Stop
-    $verifyType = (Get-Item -Path $RegPath).GetValueKind($RegValueName)
-    
-    if ($verifyValue.$RegValueName -eq $RequiredValue -and $verifyType -eq $RequiredType) {
-        $remediationSuccess = $true
-        Write-Host "  [OK] Registry value configured successfully" -ForegroundColor Green
-    }
-    else {
-        $remediationError = "Verification failed. Value was set but does not match expected configuration."
-        Write-Host "  [FAIL] Verification failed" -ForegroundColor Red
-    }
-}
-catch {
-    $remediationError = $_.Exception.Message
-    Write-Host "  [ERROR] Failed to configure registry: $remediationError" -ForegroundColor Red
+    echo ""
 }
 
-Write-Host ""
-
-# Display Results
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "REMEDIATION RESULTS" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host ""
-
-if ($remediationSuccess) {
-    Write-Host "STATUS: SUCCESSFUL" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Configuration Applied:" -ForegroundColor Green
-    Write-Host "  Registry Path: $RegPath" -ForegroundColor Green
-    Write-Host "  Value Name: $RegValueName" -ForegroundColor Green
-    Write-Host "  Value Type: REG_DWORD" -ForegroundColor Green
-    Write-Host "  Value Data: $RequiredValue" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Security Improvement:" -ForegroundColor Green
-    Write-Host "  - Autoplay is now disabled for non-volume devices" -ForegroundColor Green
-    Write-Host "  - MTP devices and similar will not auto-execute content" -ForegroundColor Green
-    Write-Host "  - Protection against malicious code execution via Autoplay" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Note: This setting takes effect immediately for new device connections." -ForegroundColor Cyan
-    Write-Host "      No system restart is required." -ForegroundColor Cyan
-    Write-Host ""
+cleanup_dependencies() {
+    echo -e "${CYAN}Cleaning up unused dependencies...${NC}"
     
-    # Create remediation report
-    $remediationReport = [PSCustomObject]@{
-        STIG_ID = $STIG_ID
-        Title = $STIG_Title
-        Severity = $Severity
-        Status = "Remediated"
-        RegistryPath = $RegPath
-        ValueName = $RegValueName
-        ConfiguredValue = $RequiredValue
-        ConfiguredType = $RequiredType
-        PreviousValue = if ($null -ne $currentValue) { $currentValue } else { "Not configured" }
-        PreviousType = if ($null -ne $currentType) { $currentType } else { "N/A" }
-        BackupLocation = if ($CreateBackup -and (Test-Path $backupPath)) { $backupPath } else { "No backup created" }
-        RemediationDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    }
+    DEBIAN_FRONTEND=noninteractive apt-get autoremove -y > /dev/null 2>&1
     
-    Write-Output $remediationReport
+    echo -e "${GREEN}  ✓ Cleanup complete${NC}"
+    echo ""
+}
+
+verify_removal() {
+    echo -e "${CYAN}Verifying removal...${NC}"
+    echo ""
+    
+    local verification_passed=true
+    
+    # Check for any remaining telnet packages
+    local check_packages=("telnetd" "telnet" "inetutils-telnetd" "telnet-server")
+    
+    for package in "${check_packages[@]}"; do
+        if dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q "install ok installed"; then
+            echo -e "${RED}  ✗ $package is still installed${NC}"
+            verification_passed=false
+        else
+            echo -e "${GREEN}  ✓ $package not installed${NC}"
+        fi
+    done
+    
+    # Check for telnet port listening
+    if command -v ss &> /dev/null; then
+        if ss -tuln 2>/dev/null | grep -E ':23\s' > /dev/null; then
+            echo -e "${RED}  ✗ Port 23 still listening${NC}"
+            verification_passed=false
+        else
+            echo -e "${GREEN}  ✓ Port 23 not listening${NC}"
+        fi
+    fi
+    
+    # Check for telnet processes
+    if pgrep -x "telnetd" > /dev/null 2>&1; then
+        echo -e "${RED}  ✗ telnetd process still running${NC}"
+        verification_passed=false
+    else
+        echo -e "${GREEN}  ✓ No telnetd processes${NC}"
+    fi
+    
+    echo ""
+    
+    if [ "$verification_passed" = true ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+#########################################################################
+# Main Execution
+#########################################################################
+
+clear
+print_header
+check_root
+
+# Warning
+echo -e "${RED}WARNING: CRITICAL SECURITY REMEDIATION${NC}"
+echo -e "${YELLOW}This will remove all telnet packages${NC}"
+echo ""
+echo "Telnet transmits data in CLEAR TEXT (including passwords)"
+echo "Use SSH instead for secure remote access"
+echo ""
+
+read -p "Continue? (yes/no): " response
+if [[ ! "$response" =~ ^[Yy][Ee][Ss]$ ]]; then
+    echo "Cancelled"
     exit 0
-}
-else {
-    Write-Host "STATUS: FAILED" -ForegroundColor Red
-    Write-Host ""
-    Write-Host "Remediation could not be completed." -ForegroundColor Red
-    Write-Host "Error: $remediationError" -ForegroundColor Red
-    Write-Host ""
-    Write-Host "Troubleshooting Steps:" -ForegroundColor Yellow
-    Write-Host "  1. Verify you are running PowerShell as Administrator" -ForegroundColor Yellow
-    Write-Host "  2. Check if Group Policy is overriding this setting" -ForegroundColor Yellow
-    Write-Host "  3. Verify registry permissions on: $RegPath" -ForegroundColor Yellow
-    Write-Host "  4. Review any error messages above" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "Manual Remediation:" -ForegroundColor Yellow
-    Write-Host "  1. Open Group Policy Editor (gpedit.msc)" -ForegroundColor Yellow
-    Write-Host "  2. Navigate to: Computer Configuration >> Administrative Templates >>" -ForegroundColor Yellow
-    Write-Host "     Windows Components >> AutoPlay Policies" -ForegroundColor Yellow
-    Write-Host "  3. Enable: 'Disallow Autoplay for non-volume devices'" -ForegroundColor Yellow
-    Write-Host ""
-    
+fi
+echo ""
+
+# Update package cache
+echo -e "${CYAN}Updating package cache...${NC}"
+apt-get update -qq
+echo ""
+
+# Execute remediation
+stop_telnet_services
+remove_telnet_packages
+cleanup_config_files
+cleanup_dependencies
+
+# Verify
+if verify_removal; then
+    REMEDIATION_SUCCESS=true
+else
+    REMEDIATION_SUCCESS=false
+fi
+
+# Summary
+echo -e "${CYAN}======================================${NC}"
+echo -e "${CYAN}REMEDIATION SUMMARY${NC}"
+echo -e "${CYAN}======================================${NC}"
+echo "Packages Removed: ${REMOVED_COUNT}"
+echo "Failed Removals: ${FAILED_COUNT}"
+echo ""
+
+if [ "$REMEDIATION_SUCCESS" = true ] && [ "$FAILED_COUNT" -eq 0 ]; then
+    echo -e "${GREEN}======================================${NC}"
+    echo -e "${GREEN}REMEDIATION SUCCESSFUL${NC}"
+    echo -e "${GREEN}======================================${NC}"
+    echo -e "${GREEN}System is now compliant with STIG ${STIG_ID}${NC}"
+    echo ""
+    echo -e "${CYAN}Next Steps:${NC}"
+    echo "  • Verify SSH is working: systemctl status ssh"
+    echo "  • Test remote access: ssh user@hostname"
+    echo "  • Run check script to verify compliance"
+    exit 0
+else
+    echo -e "${RED}======================================${NC}"
+    echo -e "${RED}REMEDIATION INCOMPLETE${NC}"
+    echo -e "${RED}======================================${NC}"
+    echo ""
+    echo -e "${YELLOW}Manual removal:${NC}"
+    echo "  sudo apt-get remove --purge telnetd telnet inetutils-telnetd"
     exit 1
-}
+fi
