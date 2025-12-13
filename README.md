@@ -81,4 +81,7 @@ Below is a screenshot of STIG Viewer:
 
 <img width="1010" height="757" alt="Screenshot 2025-12-12 151854" src="https://github.com/user-attachments/assets/2f4b5715-6011-4e62-9250-4a76ab19178b" />
 
+## Demo Video
+
+The link to the video demo can be found here: https://gmuedu-my.sharepoint.com/personal/akatti2_gmu_edu/_layouts/15/stream.aspx?id=%2Fpersonal%2Fakatti2_gmu_edu%2FDocuments%2F!%20Fall%202025%2FProject%20Video%20Uploads%2FPhilip%20Isaacs%20Project%20Demo.mp4&referrerScenario=AddressBarCopied.view.97bfb329-d4ec-40cc-91d7-38b8994461de
 
