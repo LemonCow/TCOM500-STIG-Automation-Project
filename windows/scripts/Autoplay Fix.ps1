@@ -300,13 +300,7 @@ if ($remediationSuccess) {
         RemediatedBy = $env:USERNAME
         Hostname = $env:COMPUTERNAME
     }
-    
-    # Save report to file
-    $reportPath = "$env:TEMP\STIG_Remediation_$STIG_ID`_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
-    $remediationReport | ConvertTo-Json | Out-File -FilePath $reportPath -Encoding UTF8
-    Write-Host "Remediation report saved to: $reportPath" -ForegroundColor Cyan
-    Write-Host ""
-    
+       
     exit 0
 }
 else {
@@ -333,4 +327,5 @@ else {
     Write-Host ""
     
     exit 1
+
 }
